@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/kradalby/govcloudair"
-	types "github.com/kradalby/govcloudair/types/v56"
+	"github.com/rodion-goritskov/govcloudair"
+	types "github.com/rodion-goritskov/govcloudair/types/v56"
 )
 
 func resourceVcdVM() *schema.Resource {
@@ -75,6 +75,10 @@ func resourceVcdVM() *schema.Resource {
 			},
 			"storage_profile": {
 				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"storage_size": {
+				Type:     schema.TypeInt,
 				Optional: true,
 			},
 			"admin_password_auto": {

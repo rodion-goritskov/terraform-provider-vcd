@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
-	govcd "github.com/kradalby/govcloudair" // Forked from vmware/govcloudair
-	types "github.com/kradalby/govcloudair/types/v56"
+	govcd "github.com/rodion-goritskov/govcloudair" // Forked from vmware/govcloudair
+	types "github.com/rodion-goritskov/govcloudair/types/v56"
 )
 
 // func createVMDescription() (*types.NewVMDescription, error) {
@@ -59,23 +59,27 @@ func composeSourceItem(d *schema.ResourceData, meta interface{}) (*types.Sourced
 		InstantiationParams: &types.InstantiationParams{
 			NetworkConnectionSection: vm.VM.NetworkConnectionSection,
 			// GuestCustomizationSection: vm.VM.GuestCustomizationSection,
-			OVFVirtualHardwareSection: vm.VM.VirtualHardwareSection.ConvertToOVF(),
+			//OVFVirtualHardwareSection: vm.VM.VirtualHardwareSection.ConvertToOVF(),
 		},
 	}
 
 	var storageProfile types.Reference
 
+	log.Printf("Creating storage profile")
 	if d.Get("storage_profile").(string) != "" {
+		log.Printf("Getting storage profile")
 		storageProfile, err = vcdClient.OrgVdc.FindStorageProfileReference(d.Get("storage_profile").(string))
 		if err != nil {
 			return nil, err
 		}
 	} else {
+		log.Printf("Creating storage profile from default")
 		storageProfile, err = vcdClient.OrgVdc.GetDefaultStorageProfileReference()
 		if err != nil {
 			return nil, err
 		}
 	}
+	log.Printf("Got storage profile")
 
 	sourceItem.StorageProfile = &storageProfile
 
@@ -139,6 +143,11 @@ func configureVM(d *schema.ResourceData, vm *govcd.VM) error {
 		}
 	}
 
+	if d.HasChange("storage_size") {
+		log.Printf("[TRACE] (%s) Cnanging storage size", d.Get("name").(string))
+		vm.SetStorageSize(d.Get("storage_size").(int))
+	}
+
 	// vm.SetNeedsCustomization(true)
 	// }
 
@@ -189,7 +198,7 @@ func configureVM(d *schema.ResourceData, vm *govcd.VM) error {
 	vm.SetNeedsCustomization(true)
 	// }
 
-	// log.Printf("[TRACE] (%s) Done configuring %s, d before reread: %#v", d.Get("name").(string), d.Get("href").(string), d)
+	log.Printf("[TRACE] (%s) Done configuring %s, d before reread: %#v", d.Get("name").(string), d.Get("href").(string), d)
 
 	return nil
 }
@@ -317,9 +326,9 @@ func createNetworkConnectionSection(networkConnections []map[string]interface{})
 	}
 
 	newNetwork := &types.NetworkConnectionSection{
-		Xmlns: "http://www.vmware.com/vcloud/v1.5",
-		Ovf:   "http://schemas.dmtf.org/ovf/envelope/1",
-		Info:  "Specifies the available VM network connections",
+		Xmlns:                         "http://www.vmware.com/vcloud/v1.5",
+		Ovf:                           "http://schemas.dmtf.org/ovf/envelope/1",
+		Info:                          "Specifies the available VM network connections",
 		PrimaryNetworkConnectionIndex: primaryNetworkConnectionIndex,
 		NetworkConnection:             newNetworkConnections,
 	}
