@@ -8,8 +8,8 @@ import (
 	"os"
 	"sync"
 	"time"
-
-	types "github.com/rodion-goritskov/govcloudair/types/v56"
+	"github.com/rodion-goritskov/govcloudair/types/v56"
+	"net/http/httputil"
 )
 
 type VCDClient struct {
@@ -81,6 +81,12 @@ func (c *VCDClient) vcdauthorize(user, pass, org string) error {
 
 	// Add the Accept header for vCA
 	req.Header.Add(GetVersionHeader(types.ApiVersion))
+
+	requestDump, err := httputil.DumpRequest(req, true)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(requestDump))
 
 	resp, err := checkResp(c.Client.Http.Do(req))
 	if err != nil {

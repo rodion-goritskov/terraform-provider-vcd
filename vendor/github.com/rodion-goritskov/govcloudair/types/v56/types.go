@@ -97,8 +97,9 @@ const ApiVersion170 ApiVersionType = "17.0" // vCloud Air Compute Service
 const ApiVersion200 ApiVersionType = "20.0" // vCloud Director 8.10
 const ApiVersion270 ApiVersionType = "27.0" // vCloud Director 8.20
 const ApiVersion290 ApiVersionType = "29.0" // vCloud Director 9.0
+const ApiVersion310 ApiVersionType = "31.0"
 
-const ApiVersion ApiVersionType = ApiVersion90
+const ApiVersion ApiVersionType = ApiVersion310
 
 type UndeployPowerAction = string
 
