@@ -1,7 +1,11 @@
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 
-default: test build
+ifndef TRAVIS_BRANCH
+override TRAVIS_BRANCH=snapshot
+endif
+
+default: test build package
 
 install:
 	mkdir -p $(HOME)/.terraform.d/plugins
@@ -48,6 +52,11 @@ test-compile:
 		exit 1; \
 	fi
 	go test -c $(TEST) $(TESTARGS)
+
+package:
+	mv bin/terraform-provider-vcd-darwin-amd64 terraform-provider-vcd_$(TRAVIS_BRANCH) && tar -cvzf terraform-provider-vcd_$(TRAVIS_BRANCH)_macos.tar.gz terraform-provider-vcd_$(TRAVIS_BRANCH)
+	mv bin/terraform-provider-vcd-linux-amd64 terraform-provider-vcd_$(TRAVIS_BRANCH) && tar -cvzf terraform-provider-vcd_$(TRAVIS_BRANCH)_linux.tar.gz terraform-provider-vcd_$(TRAVIS_BRANCH)
+	mv bin/terraform-provider-vcd-win-amd64.exe terraform-provider-vcd_$(TRAVIS_BRANCH).exe
 
 .PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile
 

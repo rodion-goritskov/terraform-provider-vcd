@@ -1,8 +1,17 @@
 language: go
-
 go:
-  - "1.12"
-
+- '1.12'
 before_install:
-  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-  - dep ensure
+- curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+- dep ensure
+deploy:
+  provider: releases
+  api_key:
+    secure: mcfp3S7U0MLXVavVXQWTM8/8zSkWZW4ax7Dt58juXrszJoEFMgXH62gf78geBdZpuH6Yp0pwFfGg/vBNcirCLcppUXtfm3ajkxJ8DRaGQ40S6RxQg48vvAg69rp9JKIWjOEBZJ4iHVVPbBdx0S0VwHWH9LL+6AEc3g67DW6vbzLP5YEVjiFih/KtzU1z7pSZjM6hpCnn+d9u0+QBR88eSw2XRa1bnAFmDy0UzJJp3mTd4Isj6K7QXRcaY84H4gli7jbC1LtN9Cqszf2ldBf761AzigYX+cZKIqYNdgosx8gDp1Zm5sPInLlyNSZ5EV4wCDDYmQXh3u3XCsxV8HJemSLyASq4DEMPMsFtyE+2HGzj8twA4pgf8AyluCcGXXOhdAa07b3CQhJXuvaDZr2NXZCmvSRft+cAW75yo9O285CuDpJ58Z9wyQcmw8hvx7F2YJR0Lbo5i1NNDEUZAnnWmyiAcBpN7lncoO6VsOhtLBVAAxKt0J9pQeYNybAleZOnyANqzWZN0JS8rtJy/P4cw/+UuKrGeAOeynV847B2asINOETUrKIryv59tUCoSJ0Ut8mVsb/mlnY4HLgaZG1ftuZwJHhKZ8jlGAIvlKMCyJ19L8AFCuED1qX/n+Jge16hnVrmylULtJpjZAEXhEgWe98IPiyy7tiBY926M2oGqvk=
+  file:
+    - "terraform-provider-vcd_${TRAVIS_BRANCH}_macos.tar.gz"
+    - "terraform-provider-vcd_${TRAVIS_BRANCH}_linux.tar.gz"
+    - "terraform-provider-vcd_${TRAVIS_BRANCH}.exe"
+  on:
+    repo: rodion-goritskov/terraform-provider-vcd
+    tags: true
