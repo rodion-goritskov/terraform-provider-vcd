@@ -3,7 +3,7 @@ go:
 - '1.12'
 before_install:
 - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-- dep ensure -update
+- dep ensure
 deploy:
   provider: releases
   api_key:
@@ -12,6 +12,7 @@ deploy:
     - terraform-provider-vcd_${TRAVIS_BRANCH}_macos.tar.gz
     - terraform-provider-vcd_${TRAVIS_BRANCH}_linux.tar.gz
     - terraform-provider-vcd_${TRAVIS_BRANCH}.exe
+  skip_cleanup: true
   on:
     repo: rodion-goritskov/terraform-provider-vcd
     tags: true
